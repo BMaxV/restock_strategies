@@ -2,6 +2,14 @@ import matplotlib.pyplot as plt
 import random
 import math
 
+#ok so for the moment this is simply set up to account for one distribution
+#center
+
+#and the distribution center is not billing you for frequency.
+#so it's not done
+
+
+
 class lager:
     def __init__(self):
         #this is what it costs you to store something
@@ -161,6 +169,11 @@ class lager:
         
     
     def sim(self,plot=False):
+        """ simulate the chosen strategy and plot stocks and costs 
+        returns list of diversity costs and volume costs,
+        which means 
+        cost per item (volume like 500kg flour)
+        cost per item (as a new different item like flour, sugar, salt)"""
         self.time=0
         tm=100
         #self.sim_volume_cost_track=0
@@ -206,7 +219,7 @@ class lager:
             print("cost to diversity",self.sim_diversity_cost_track)
             plt.show()
         
-
+        return self.order_time,self.sim_diversity_cost,self.sim_volume_cost
 class good:
     def __init__(self,name="dummy",max_=100,current=0,limit=0.4,consumption=10):
         self.name=name
@@ -258,10 +271,25 @@ def test_all_strategies():
     #rideshare, this efficiency by bundling should go away
     #or be reduced by loading/unloading/waiting inefficiencies.
     #I THINK...
-    test_fcv()
-    test_mvc()
-    test_mvtc()
     
+    
+    plot=False #plot the individual strategies
+    
+    x1,vc1,dc1=test_fcv(plot)
+    x2,vc2,dc2=test_mvc(plot)
+    x3,vc3,dc3=test_mvtc(plot)
+    
+    plt.plot(x1,vc1,label="fixed volume")
+    plt.plot(x2,vc2,label="fixed time")
+    plt.plot(x3,vc3,label="minimum volume time")
+    plt.legend()
+    plt.show()
+    
+    plt.plot(x1,dc1,label="fixed volume")
+    plt.plot(x2,dc2,label="fixed time")
+    plt.plot(x3,dc3,label="minimum volume time")
+    plt.legend()
+    plt.show()
     
 def create_dummy_goods(l):
     a=good("a",150,0,0.3,15)
@@ -269,24 +297,32 @@ def create_dummy_goods(l):
     c=good("c",500,0,0.1,10)
     l.goods=[a,b,c]
     
-def test_fcv():
+def test_fcv(plot=False):
     l=lager()
     l.chosen_strategy="fixed volume"
     create_dummy_goods(l)
-    l.sim(True)
-def test_mvc():
+    
+    x,vc,dc = l.sim(plot)
+    
+    return x,vc,dc 
+    
+def test_mvc(plot=False):
     l=lager()
     l.chosen_strategy="minimum volume"
     create_dummy_goods(l)
-    l.sim(True)
     
-def test_mvtc():
+    x,vc,dc = l.sim(plot)
+    
+    return x,vc,dc 
+    
+def test_mvtc(plot=False):
     l=lager()
     l.chosen_strategy="minimum volume time"
     create_dummy_goods(l)
-    l.sim(True)
     
+    x,vc,dc = l.sim(plot)
     
+    return x,vc,dc 
     
 
 
